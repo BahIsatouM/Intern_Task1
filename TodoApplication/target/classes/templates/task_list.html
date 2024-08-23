@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+          integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .main {
+            width: 100%;
+            max-width: 800px;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .todo-input-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        #todo-input {
+            width: calc(100% - 80px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .text-link {
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 0;
+            font-size: 16px;
+            color: #007bff;
+        }
+
+        .text-link:hover {
+            color: #0056b3;
+        }
+
+        .delete-all {
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            background-color: lightgray;
+        }
+
+        .delete-all .text-link {
+            color: #dc3545;
+        }
+
+        .delete-all .text-link:hover {
+            color: #c82333;
+        }
+
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .task-table th, .task-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .task-table th {
+            background-color: #f4f4f4;
+            text-align: left;
+        }
+
+        .task-title {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .task-description {
+            color: #666;
+        }
+
+    </style>
+</head>
+
+<body>
+<main class="main">
+    <h1>Todo List</h1>
+    <form id="todo-form" th:action="@{/add-task}" method="post" onsubmit="return validateForm()">
+        <!-- Row 1: Add Task -->
+        <div class="todo-input-row">
+            <input type="text" id="todo-input" name="title" placeholder="Add your task" required>
+            <span class="text-link" onclick="document.getElementById('todo-form').submit();">Enter</span>
+        </div>
+    </form>
+
+    <!-- Task Table -->
+    <table class="task-table" th:if="${tasks}">
+        <thead>
+        <tr>
+            <th>Activity</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Existing tasks will be listed here -->
+        <tr th:each="task : ${tasks}">
+            <td th:text="${task.title}" class="task-title"></td>
+            <td th:text="${task.description}" class="task-description" th:if="${task.description}"></td>
+            <td>
+                <a th:href="@{/edit-task/{id}(id=${task.id})}" class="text-link">Edit</a> |
+                <a th:href="@{/delete-task/{id}(id=${task.id})}" class="text-link">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Row 3: Delete All Button -->
+    <div class="delete-all">
+        <a th:href="@{/delete-all-tasks}" class="text-link">Delete All Tasks</a>
+    </div>
+</main>
+
+<script>
+    function validateForm() {
+        const title = document.querySelector('#todo-input').value.trim();
+        if (!title) {
+            alert('Title cannot be empty');
+            return false;
+        }
+        return true;
+    }
+</script>
+
+</body>
+
+</html>
